@@ -1,9 +1,37 @@
+version: '3.9'
+
 services:
   postgres:
-    image: 'postgres:latest'
+    image: postgres:16
+    container_name: usermanager-db
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_DB: usermanager
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     ports:
-      - '5432'
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d usermanager"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+
+  app:
+    build: .
+    container_name: usermanager-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/usermanager
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,4 +1,4 @@
-package com.task.user_manager.domain.model;
+package com.task.user_manager.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,8 +18,6 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
     private String firstName;
     private String lastName;
