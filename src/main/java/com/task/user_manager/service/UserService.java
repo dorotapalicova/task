@@ -2,14 +2,18 @@ package com.task.user_manager.service;
 
 import com.task.user_manager.dto.user.CreateUserRequest;
 import com.task.user_manager.dto.user.UpdateUserRequest;
+import com.task.user_manager.exception.UserNotFoundException;
 import com.task.user_manager.model.User;
 import com.task.user_manager.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -17,23 +21,47 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PolicyEvaluationService policyEvaluationService;
 
     public Page<User> findAll(int page, int length) {
         return this.userRepository.findAll(PageRequest.of(page, length));
     }
 
-    public User find(String name) {
-        //TODO
-        return this.userRepository.findUserByName(name).orElseThrow(new ClassNotFoundException());
+    public User find(String name) throws UserNotFoundException {
+        return this.userRepository.findUserByName(name).orElseThrow(() -> new UserNotFoundException(name));
     }
 
-    public User create(@Valid CreateUserRequest request) {
+    public User create(CreateUserRequest request) {
+        User user = new User(
+                request.getName(),
+                request.getFirstName(),
+                request.getLastName(),
+                request.getEmailAddress(),
+                request.getOrganizationUnit(),
+                request.getBirthDate(),
+                LocalDate.now(),
+                new HashSet<>());
+        user = policyEvaluationService.applyPolicies(user);
+
+        userRepository.save(user);
+        return user;
     }
 
-    public Object update(Long id, @Valid UpdateUserRequest request) {
+    public User update(String name, UpdateUserRequest request) throws UserNotFoundException {
+        User user = this.userRepository.findUserByName(name).orElseThrow(() -> new UserNotFoundException(name));
+
+        Optional.ofNullable(request.getFirstName()).ifPresent(user::setFirstName);
+        Optional.ofNullable(request.getLastName()).ifPresent(user::setLastName);
+        Optional.ofNullable(request.getEmailAddress()).ifPresent(user::setEmailAddress);
+        Optional.ofNullable(request.getOrganizationUnit()).ifPresent(user::setOrganizationUnit);
+        Optional.ofNullable(request.getBirthDate()).ifPresent(user::setBirthDate);
+
+        userRepository.save(user);
+        return user;
     }
 
-    public void delete(Long id) {
-
+    public void delete(String name) throws UserNotFoundException {
+        userRepository.delete(this.userRepository.findUserByName(name)
+                .orElseThrow(() -> new UserNotFoundException(name)));
     }
 }

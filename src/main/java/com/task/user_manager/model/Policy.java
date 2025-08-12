@@ -1,9 +1,7 @@
 package com.task.user_manager.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +10,7 @@ import java.util.Map;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "policies")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Policy {
@@ -20,6 +18,11 @@ public class Policy {
     @Id
     private String id;
     private String name;
-    private Map<String, Object> conditions;
+
+    @ElementCollection
+    @CollectionTable(name = "policy_conditions", joinColumns = @JoinColumn(name = "policy_id"))
+    @MapKeyColumn(name = "condition_key")
+    @Column(name = "condition_value")
+    private Map<String, String> conditions;
 
 }

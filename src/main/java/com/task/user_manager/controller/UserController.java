@@ -4,6 +4,7 @@ import com.task.user_manager.dto.user.CreateUserRequest;
 import com.task.user_manager.dto.user.UpdateUserRequest;
 import com.task.user_manager.dto.user.UserResponse;
 import com.task.user_manager.dto.user.UsersResponse;
+import com.task.user_manager.exception.UserNotFoundException;
 import com.task.user_manager.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +31,7 @@ public class UserController {
 
     @GetMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "200"),
     })
     @Operation(
             summary = "Request all users",
@@ -45,28 +46,22 @@ public class UserController {
 
     @GetMapping("/{name}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404 (101100)", description = "User was not found", content = @Content(
-                    mediaType = "application/json",
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "404", description = "User was not found on server", content = @Content(
                     schema = @Schema(implementation = ErrorResponse.class)
             )),
-
     })
     @Operation(
             summary = "Request user profile information",
             description = "Retrieve detailed information about a user by their username."
     )
-    UserResponse getUser(@PathVariable @Valid String name) {
+    UserResponse getUser(@PathVariable @Valid String name) throws UserNotFoundException {
         return new UserResponse(this.userService.find(name));
     }
 
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "400 (100102)", description = "Invalid Request", content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
     })
     @Operation(
             summary = "Create new user",
@@ -79,15 +74,9 @@ public class UserController {
     @PutMapping("/{name}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404 (101100)", description = "User was not found", content = @Content(
-                    mediaType = "application/json",
+            @ApiResponse(responseCode = "404", description = "User was not found on server", content = @Content(
                     schema = @Schema(implementation = ErrorResponse.class)
             )),
-            @ApiResponse(responseCode = "400 (100102)", description = "Invalid Request", content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
-
     })
     @Operation(
             summary = "Update user profile information",
@@ -96,19 +85,22 @@ public class UserController {
     public UserResponse updateUser(
             @PathVariable String name,
             @Valid @RequestBody UpdateUserRequest request
-    ) {
+    ) throws UserNotFoundException {
         return new UserResponse(this.userService.update(name, request));
     }
 
     @DeleteMapping("/{name}")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "User was not found on server", content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class)
+            )),
     })
     @Operation(
             summary = "Delete user profile",
             description = "Delete a user by their username."
     )
-    public void deleteUser(@PathVariable String name) {
+    public void deleteUser(@PathVariable String name) throws UserNotFoundException {
         this.userService.delete(name);
     }
 }
