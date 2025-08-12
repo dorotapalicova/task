@@ -62,7 +62,7 @@ public class PolicyEvaluationService {
     private boolean doesPolicyApplyToUser(Policy policy, User user) {
         for (Map.Entry<String, String> conditionEntry : policy.getConditions().entrySet()) {
             String conditionKey = conditionEntry.getKey();
-            Object conditionValue = conditionEntry.getValue();
+            String conditionValue = conditionEntry.getValue();
 
             PolicyType policyType = Arrays.stream(PolicyType.values())
                     .filter(pt -> pt.getName().equals(conditionKey))
@@ -73,7 +73,7 @@ public class PolicyEvaluationService {
                 throw new IllegalArgumentException("Invalid policy condition key: " + conditionKey);
             }
 
-            PolicyEvaluator<?> evaluator = evaluatorFactory.getEvaluator(policyType);
+            PolicyEvaluator evaluator = evaluatorFactory.getEvaluator(policyType);
             if (evaluator == null || !evaluator.evaluate(user, conditionValue)) {
                 return false;
             }

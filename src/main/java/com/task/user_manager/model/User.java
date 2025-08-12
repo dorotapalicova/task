@@ -22,8 +22,14 @@ public class User {
     private String firstName;
     private String lastName;
     private String emailAddress;
+    @ElementCollection
+    @CollectionTable(name = "user_organization_unit", joinColumns = @JoinColumn(name = "user_name"))
+    @Column(name = "organization_unit")
     private List<String> organizationUnit;
     private LocalDate birthDate;
     private LocalDate registeredOn;
+    @ElementCollection
+    @CollectionTable(name = "user_policy", joinColumns = @JoinColumn(name = "user_name"))
+    @Column(name = "policy_id")
     private Set<String> policy = new HashSet<>();
 }

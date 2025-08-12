@@ -8,7 +8,6 @@ import com.task.user_manager.exception.UserNotFoundException;
 import com.task.user_manager.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +16,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 @Validated
@@ -47,9 +45,7 @@ public class UserController {
     @GetMapping("/{name}")
     @ApiResponses({
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "404", description = "User was not found on server", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "404", description = "User was not found on server"),
     })
     @Operation(
             summary = "Request user profile information",
@@ -74,9 +70,7 @@ public class UserController {
     @PutMapping("/{name}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "User was not found on server", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "404", description = "User was not found on server"),
     })
     @Operation(
             summary = "Update user profile information",
@@ -92,9 +86,7 @@ public class UserController {
     @DeleteMapping("/{name}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "User was not found on server", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "404", description = "User was not found on server"),
     })
     @Operation(
             summary = "Delete user profile",

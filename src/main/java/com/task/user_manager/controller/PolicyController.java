@@ -47,9 +47,7 @@ public class PolicyController {
     @GetMapping("/{name}")
     @ApiResponses({
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "404", description = "Policy was not found on server.", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "404", description = "Policy was not found on server."),
     })
     @Operation(
             summary = "Request policy information",
@@ -62,9 +60,7 @@ public class PolicyController {
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400", description = "Policy condition type is not supported.", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "400", description = "Policy condition type is not supported."),
     })
     @Operation(
             summary = "Create new policy",
@@ -80,9 +76,7 @@ public class PolicyController {
             @ApiResponse(responseCode = "404", description = "Policy was not found on server.", content = @Content(
                     schema = @Schema(implementation = ErrorResponse.class)
             )),
-            @ApiResponse(responseCode = "400", description = "Policy condition type is not supported.", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "400", description = "Policy condition type is not supported."),
     })
     @Operation(
             summary = "Update policy information",
@@ -98,9 +92,7 @@ public class PolicyController {
     @DeleteMapping("/{name}")
     @ApiResponses({
             @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "404", description = "Policy was not found on server.", content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )),
+            @ApiResponse(responseCode = "404", description = "Policy was not found on server."),
     })
     @Operation(
             summary = "Delete policy profile",

@@ -56,6 +56,8 @@ public class UserService {
         Optional.ofNullable(request.getOrganizationUnit()).ifPresent(user::setOrganizationUnit);
         Optional.ofNullable(request.getBirthDate()).ifPresent(user::setBirthDate);
 
+        user = policyEvaluationService.applyPolicies(user);
+
         userRepository.save(user);
         return user;
     }

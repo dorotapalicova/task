@@ -1,13 +1,12 @@
-package com.task.user_manager.policy.evaluator.impl;
+package com.task.user_manager.policy.evaluator;
 
 import com.task.user_manager.model.User;
-import com.task.user_manager.policy.evaluator.PolicyEvaluator;
 import com.task.user_manager.policy.PolicyType;
 
 import java.time.LocalDate;
 import java.time.Period;
 
-public class YoungerThanEvaluator implements PolicyEvaluator<PolicyType> {
+public class YoungerThanEvaluator implements PolicyEvaluator {
 
     @Override
     public PolicyType getPolicyType() {
@@ -15,8 +14,8 @@ public class YoungerThanEvaluator implements PolicyEvaluator<PolicyType> {
     }
 
     @Override
-    public boolean evaluate(User user, Object conditionValue) {
-        int ageLimit = (Integer) conditionValue;
+    public boolean evaluate(User user, String conditionValue) {
+        int ageLimit = Integer.parseInt(conditionValue);
         int userAge = Period.between(user.getBirthDate(), LocalDate.now()).getYears();
         return userAge < ageLimit;
     }
