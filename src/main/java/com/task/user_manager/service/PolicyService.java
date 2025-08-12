@@ -3,6 +3,7 @@ package com.task.user_manager.service;
 import com.task.user_manager.dto.policy.CreatePolicyRequest;
 import com.task.user_manager.dto.policy.UpdatePolicyRequest;
 import com.task.user_manager.exception.IllegalPolicyTypeException;
+import com.task.user_manager.exception.PolicyAlreadyExistsException;
 import com.task.user_manager.exception.PolicyNotFoundException;
 import com.task.user_manager.exception.UserNotFoundException;
 import com.task.user_manager.model.Policy;
@@ -37,6 +38,10 @@ public class PolicyService {
     }
 
     public Policy create(CreatePolicyRequest request) throws IllegalPolicyTypeException {
+        if (this.policyRepository.findById(request.getName()).isPresent()) {
+            throw new PolicyAlreadyExistsException(request.getName());
+        }
+
         this.checkValidConditions(request.getConditions());
 
         Policy policy = new Policy(

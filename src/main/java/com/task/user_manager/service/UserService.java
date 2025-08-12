@@ -2,6 +2,7 @@ package com.task.user_manager.service;
 
 import com.task.user_manager.dto.user.CreateUserRequest;
 import com.task.user_manager.dto.user.UpdateUserRequest;
+import com.task.user_manager.exception.UserAlreadyExistsException;
 import com.task.user_manager.exception.UserNotFoundException;
 import com.task.user_manager.model.User;
 import com.task.user_manager.repository.UserRepository;
@@ -32,6 +33,10 @@ public class UserService {
     }
 
     public User create(CreateUserRequest request) {
+        if (this.userRepository.findUserByName(request.getName()).isPresent()) {
+            throw new UserAlreadyExistsException(request.getName());
+        }
+
         User user = new User(
                 request.getName(),
                 request.getFirstName(),
