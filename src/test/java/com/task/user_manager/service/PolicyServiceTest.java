@@ -36,25 +36,25 @@ class PolicyServiceTest {
         policyService = new PolicyService(policyEvaluationService, policyRepository);
     }
 
-    private Policy getPolicy(String id, String name, Map<String, String> conditions) {
-        return new Policy(id, name, conditions);
+    private Policy getPolicy(Map<String, String> conditions) {
+        return new Policy("p1", "policy1", conditions);
     }
 
     @Test
     void findAll_shouldReturnPage() {
-        List<Policy> policies = List.of(getPolicy("p1", "policy1", Map.of()));
+        List<Policy> policies = List.of(getPolicy(Map.of()));
         Page<Policy> page = new PageImpl<>(policies);
         when(policyRepository.findAll(any(PageRequest.class))).thenReturn(page);
 
         Page<Policy> result = policyService.findAll(0, 10);
 
         assertEquals(1, result.getTotalElements());
-        assertEquals("p1", result.getContent().get(0).getId());
+        assertEquals("p1", result.getContent().getFirst().getId());
     }
 
     @Test
     void find_shouldReturnPolicy() {
-        Policy policy = getPolicy("p1", "policy1", Map.of());
+        Policy policy = getPolicy(Map.of());
         when(policyRepository.findById("policy1")).thenReturn(Optional.of(policy));
 
         Policy result = policyService.find("policy1");
@@ -90,7 +90,7 @@ class PolicyServiceTest {
         Map<String, String> conditions = Map.of(PolicyType.IS_MEMBER_OF.getName(), "IT");
         CreatePolicyRequest req = new CreatePolicyRequest("p1", "policy1", conditions);
 
-        when(policyRepository.findById("policy1")).thenReturn(Optional.of(getPolicy("p1", "policy1", conditions)));
+        when(policyRepository.findById("policy1")).thenReturn(Optional.of(getPolicy(conditions)));
 
         assertThrows(PolicyAlreadyExistsException.class, () -> policyService.create(req));
     }
@@ -108,7 +108,7 @@ class PolicyServiceTest {
     @Test
     void update_shouldUpdateAndReturnPolicy() {
         Map<String, String> oldConditions = Map.of(PolicyType.IS_MEMBER_OF.getName(), "IT");
-        Policy policy = getPolicy("p1", "policy1", oldConditions);
+        Policy policy = getPolicy(oldConditions);
 
         Map<String, String> newConditions = Map.of(PolicyType.EMAIL_DOMAIN_IS.getName(), "example.com");
         UpdatePolicyRequest req = new UpdatePolicyRequest();
@@ -134,7 +134,7 @@ class PolicyServiceTest {
 
     @Test
     void update_shouldThrowIfInvalidConditionKey() {
-        Policy policy = getPolicy("p1", "policy1", Map.of());
+        Policy policy = getPolicy(Map.of());
         UpdatePolicyRequest req = new UpdatePolicyRequest();
         req.setConditions(Map.of("invalid_key", "value"));
 
@@ -145,7 +145,7 @@ class PolicyServiceTest {
 
     @Test
     void delete_shouldRemovePolicy() {
-        Policy policy = getPolicy("p1", "policy1", Map.of());
+        Policy policy = getPolicy(Map.of());
         when(policyRepository.findById("policy1")).thenReturn(Optional.of(policy));
 
         policyService.delete("policy1");

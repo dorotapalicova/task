@@ -31,12 +31,12 @@ class UserServiceTest {
         userService = new UserService(userRepository, policyEvaluationService);
     }
 
-    private User getUser(String name) {
+    private User getUser() {
         User user = new User();
-        user.setName(name);
+        user.setName("user1");
         user.setFirstName("First");
         user.setLastName("Last");
-        user.setEmailAddress(name + "@example.com");
+        user.setEmailAddress("user1" + "@example.com");
         user.setOrganizationUnit(List.of("IT"));
         user.setBirthDate(LocalDate.of(2000, 1, 1));
         user.setRegisteredOn(LocalDate.now());
@@ -50,7 +50,7 @@ class UserServiceTest {
                 "user1", "First", "Last", "user1@example.com", List.of("IT"), LocalDate.of(2000, 1, 1)
         );
         when(userRepository.findUserByName("user1")).thenReturn(Optional.empty());
-        User user = getUser("user1");
+        User user = getUser();
         when(policyEvaluationService.applyPolicies(any(User.class))).thenReturn(user);
 
         User result = userService.create(req);
@@ -64,14 +64,14 @@ class UserServiceTest {
         CreateUserRequest req = new CreateUserRequest(
                 "user1", "First", "Last", "user1@example.com", List.of("IT"), LocalDate.of(2000, 1, 1)
         );
-        when(userRepository.findUserByName("user1")).thenReturn(Optional.of(getUser("user1")));
+        when(userRepository.findUserByName("user1")).thenReturn(Optional.of(getUser()));
 
         assertThrows(UserAlreadyExistsException.class, () -> userService.create(req));
     }
 
     @Test
     void find_shouldReturnUser() {
-        User user = getUser("user1");
+        User user = getUser();
         when(userRepository.findUserByName("user1")).thenReturn(Optional.of(user));
 
         User result = userService.find("user1");
@@ -88,7 +88,7 @@ class UserServiceTest {
 
     @Test
     void update_shouldUpdateFieldsAndSave() {
-        User user = getUser("user1");
+        User user = getUser();
         when(userRepository.findUserByName("user1")).thenReturn(Optional.of(user));
         when(policyEvaluationService.applyPolicies(any(User.class))).thenReturn(user);
 
@@ -119,7 +119,7 @@ class UserServiceTest {
 
     @Test
     void delete_shouldRemoveUser() {
-        User user = getUser("user1");
+        User user = getUser();
         when(userRepository.findUserByName("user1")).thenReturn(Optional.of(user));
 
         userService.delete("user1");
