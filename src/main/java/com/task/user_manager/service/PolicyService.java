@@ -5,7 +5,6 @@ import com.task.user_manager.dto.policy.UpdatePolicyRequest;
 import com.task.user_manager.exception.IllegalPolicyTypeException;
 import com.task.user_manager.exception.PolicyAlreadyExistsException;
 import com.task.user_manager.exception.PolicyNotFoundException;
-import com.task.user_manager.exception.UserNotFoundException;
 import com.task.user_manager.model.Policy;
 import com.task.user_manager.policy.PolicyType;
 import com.task.user_manager.repository.PolicyRepository;
@@ -38,8 +37,8 @@ public class PolicyService {
     }
 
     public Policy create(CreatePolicyRequest request) throws IllegalPolicyTypeException {
-        if (this.policyRepository.findById(request.getName()).isPresent()) {
-            throw new PolicyAlreadyExistsException(request.getName());
+        if (this.policyRepository.findById(request.getId()).isPresent()) {
+            throw new PolicyAlreadyExistsException(request.getId());
         }
 
         this.checkValidConditions(request.getConditions());
@@ -73,7 +72,7 @@ public class PolicyService {
 
     public void delete(String name) {
         policyRepository.delete(this.policyRepository.findById(name)
-                .orElseThrow(() -> new UserNotFoundException(name)));
+                .orElseThrow(() -> new PolicyNotFoundException(name)));
     }
 
     private void checkValidConditions(Map<String, String> conditions) throws IllegalPolicyTypeException {

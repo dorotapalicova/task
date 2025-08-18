@@ -1,6 +1,7 @@
 package com.task.user_manager.dto.user;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class UpdateUserRequest {
     private String firstName;
     @Nullable
     private String lastName;
+    @Email
     @Nullable
     private String emailAddress;
     @Nullable
