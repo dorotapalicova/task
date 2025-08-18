@@ -26,7 +26,7 @@ cd task
 
 ### Configure environment variables (optional)
 
-The default DB config is in `docker-compose.yaml`. You can adjust:
+The default DB config is in `docker-compose.yaml`. Before first run you can adjust:
 
 ```
 POSTGRES_DB=usermanager
