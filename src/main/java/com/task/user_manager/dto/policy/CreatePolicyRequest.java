@@ -18,6 +18,7 @@ public class CreatePolicyRequest {
     @NotBlank
     private String name;
     @NotNull
-    @Schema(description = "Map of condition keys and their values. Allowed keys: youngerThan, emailDomainIs, isMemberOf")
+    @Schema(description = "Map of condition keys and their values. Allowed keys: youngerThan, emailDomainIs, isMemberOf." +
+            " Email domain should only include the address after @, e.g. 'example.com'.")
     private Map<String, String> conditions;
 }
